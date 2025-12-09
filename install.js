@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import tmp from "tmp";
-import tar from "tar";
+import { extract as tarExtract } from "tar";
 import { deferDelete } from "./defer.js";
 import { arch, platform } from "node:os";
 import { writeFile } from "node:fs/promises";
@@ -8,7 +8,7 @@ import { createReadStream } from "node:fs";
 import { createGunzip } from "node:zlib";
 import { basename, join } from "node:path";
 
-const repoAuthor = "Frank-Mayer";
+const repoAuthor = "tsukinoko-kun";
 const repoName = "yab";
 let latestRelease = null;
 
@@ -36,7 +36,7 @@ async function extractArchiveAsync(archivePath) {
     const filename = platform() === "win32" ? "yab.exe" : "yab";
     const tarballReadStream = createReadStream(archivePath);
     const unzipper = createGunzip();
-    const tarExtractor = tar.extract({
+    const tarExtractor = tarExtract({
         cwd: extractDir,
         filter: (_, entry) => basename(entry.path) === filename,
     });
@@ -67,7 +67,7 @@ async function extractArchiveAsync(archivePath) {
  */
 async function downloadArchiveAsync(version) {
     const filename = getFilename(version);
-    const url = `https://github.com/Frank-Mayer/yab/releases/download/v${version}/${filename}`;
+    const url = `https://github.com/tsukinoko-kun/yab/releases/download/v${version}/${filename}`;
     const resp = await fetch(url);
     if (!resp.ok) {
         throw new Error(`Failed to download yab from ${url}`);
